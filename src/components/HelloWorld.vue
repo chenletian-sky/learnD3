@@ -1657,6 +1657,7 @@ const d3DonutChart = (data:any) => {
   return svg.node()
 
 }
+// d3 learn main
 onMounted(() => {
   let svg =  d3DrawAxisXAndY()
   svg = d3DrawBarChart(data)
