@@ -4,6 +4,7 @@
 <script setup lang="ts">
 import * as d3 from 'd3'
 import {onMounted} from "vue";
+import HistogramChartData from "../assets/json/d3HistogramData.json"
 interface dataType{
   letter:string,
   frequency:number
@@ -46,6 +47,18 @@ interface LineChartDataType{
 interface DonutChartData{
   name:string,
   value:number
+}
+interface HistogramChartDataType{
+  "id": number,
+  "state": string,
+  "county": string,
+  "rate": number
+}
+interface MarginType{
+  top:number,
+  right:number,
+  bottom:number,
+  left:number
 }
 const parseDate = (date:any)=>{
   return Date.parse(date.toString());
@@ -1353,7 +1366,10 @@ const donutChartData: DonutChartData[] = [
   { "name": "80-84", "value": 5811429 },
   { "name": "≥85", "value": 5938752 }
 ]
+const histogramChartData:HistogramChartDataType[] = HistogramChartData
+// 坐标
 const d3DrawAxisXAndY = () => {
+  // 构建画布
   let height = 400
   let width = 800
   let marginTop = 20
@@ -1396,10 +1412,11 @@ const d3DrawAxisXAndY = () => {
 
   return  svg.node()
 }
+// 柱形图
 const d3DrawBarChart = (data:any[]) => {
   const width = 800
   const height = 400
-  const margin = {top: 20, right: 30, bottom: 30, left: 40}
+  const margin:MarginType = {top: 20, right: 30, bottom: 30, left: 40}
 
   const x = d3.scaleBand()
       .domain(d3.groupSort(data, ([d]) => -d.frequency, d => d.letter))
@@ -1427,9 +1444,7 @@ const d3DrawBarChart = (data:any[]) => {
       .attr('y', d => y(d.frequency))
       .attr('height',d => y(0) - y(d.frequency))
       .attr('width',x.bandwidth())
-      .on('click', (e,d) => {
-        // console.log('test rect',e,d)
-      })
+
 
   svg.append('g')
       .attr('transform',`translate(0,${height - margin.bottom})`)
@@ -1442,18 +1457,19 @@ const d3DrawBarChart = (data:any[]) => {
       // .call(g => g.append('text').attr('x',-margin.left))
   return svg.node()
 }
+// 折线图
 const d3DrawLineChart = (data:LineChartDataType[]) => {
   const width = 800
   const height = 400
-  const margin = {top: 20, right: 30, bottom: 30, left: 40}
+  const margin:MarginType = {top: 20, right: 30, bottom: 30, left: 40}
 
   const x = d3.scaleUtc((d3.extent(data,d=> parseDate(d.date)) as Iterable<number>),[margin.left,width-margin.right])
 
   const y = d3.scaleLinear([0,d3.max(data, d => d.close) ] as Iterable<number>,[height - margin.bottom,margin.top])
 
   const line = d3.line()
-      .x(d => x(parseDate(d.date)))
-      .y(d => y(d.close))
+      .x((d:any) => x(parseDate(d.date)))
+      .y((d:any) => y(d.close))
 
   const svg = d3.select('#d3-test-hello-world')
       .append('svg')
@@ -1479,11 +1495,13 @@ const d3DrawLineChart = (data:LineChartDataType[]) => {
       .attr("fill", "none")
       .attr("stroke", "steelblue")
       .attr("stroke-width", 1.5)
-      .attr('d',line(data))
+      // @ts-ignore
+      .attr('d',() => line(data) as any)
 
   return svg.node()
 
 }
+// 折线图 原始
 const d3DrawLineChartRaw = (aapl:any[]) => {
   const width = 928;
   const height = 500;
@@ -1493,15 +1511,15 @@ const d3DrawLineChartRaw = (aapl:any[]) => {
   const marginLeft = 40;
 
   // Declare the x (horizontal position) scale.
-  const x = d3.scaleUtc(d3.extent(aapl, d => parseDate(d.date)) as Iterable<NumberValue>, [marginLeft, width - marginRight]);
+  const x = d3.scaleUtc(d3.extent(aapl, d => parseDate(d.date)) as Iterable<number>, [marginLeft, width - marginRight]);
 
   // Declare the y (vertical position) scale.
   const y = d3.scaleLinear([0, d3.max(aapl, d => d.close)], [height - marginBottom, marginTop]);
 
   // Declare the line generator.
   const line = d3.line()
-      .x(d => x(parseDate(d.date)) )
-      .y(d => y(d.close) )
+      .x((d:any) => x(parseDate(d.date)) )
+      .y((d:any) => y(d.close) )
 
   // Create the SVG container.
   const svg = d3.select('#d3-test-hello-world')
@@ -1540,6 +1558,7 @@ const d3DrawLineChartRaw = (aapl:any[]) => {
 
   return svg.node();
 }
+// 区域图
 const d3AreaChartRaw = (aapl:any) => {
   // Declare the chart dimensions and margins.
   const width = 928;
@@ -1550,19 +1569,19 @@ const d3AreaChartRaw = (aapl:any) => {
   const marginLeft = 40;
 
   // Declare the x (horizontal position) scale.
-  const x = d3.scaleUtc([parseDate(d3.min(aapl, t => t!.date)),parseDate(d3.max(aapl, t => t!.date))], [marginLeft, width - marginRight]);
+  const x = d3.scaleUtc([parseDate(d3.min(aapl, (d:any) => d!.date)),parseDate(d3.max(aapl, (d:any) => d!.date))], [marginLeft, width - marginRight]);
   // Declare the y (vertical position) scale.
-  const y = d3.scaleLinear([0, d3.max(aapl, d => d!.close)] as Iterable<NumberValue>, [height - marginBottom, marginTop]);
+  const y = d3.scaleLinear([0, d3.max(aapl, (d:any) => d!.close)] as Iterable<number>, [height - marginBottom, marginTop]);
 
   // console.log('test scale x ',x(parseDate('2008-01-01')),parseDate('2008-01-01'))
   // Declare the area generator.
   const area = d3.area()
-      .x(d => {
+      .x((d:any) => {
         // console.log('area test x',d.date,x((d!.date as string)))
         return x(parseDate(d!.date))
       })
       .y0(y(0))
-      .y1(d => {
+      .y1((d:any) => {
         // console.log('area test y',d.close,y(d.close))
         return y(d.close)
       });
@@ -1602,10 +1621,11 @@ const d3AreaChartRaw = (aapl:any) => {
 
   return svg.node();
 }
+// 圆环图
 const d3DonutChart = (data:any) => {
   const width = 500;
-  const height = d3.min([width,500])
-  const radius = d3.min([width,height])/2
+  const height:number = d3.min([width,500])!
+  const radius = d3.min([width,height])!/2
 
   const arc = d3.arc()
       .outerRadius(radius - 1)
@@ -1614,27 +1634,27 @@ const d3DonutChart = (data:any) => {
   const pie = d3.pie()
       .padAngle(1/radius)
       .sort(null)
-      .value(d => d.value)
+      .value((d:any) => d.value)
 
   const color = d3.scaleOrdinal()
-      .domain(data.map(d => d.name))
+      .domain(data.map((d:DonutChartData) => d.name))
       .range(d3.quantize(t => d3.interpolateSpectral(t * 0.8 + 0.1),data.length).reverse())
 
   const svg = d3.select('#d3-test-hello-world')
       .append('svg')
       .attr("width", width)
-      .attr("height", height)
-    .attr("viewBox", [-width / 2, -height / 2, width, height])
+      .attr("height", height as number)
+    .attr("viewBox", [-width / 2, -height as number / 2, width, height as number])
     .attr("style", "max-width: 100%; height: auto; ");
 
   svg.append('g')
       .selectAll()
       .data(pie(data))
       .join('path')
-      .attr('fill',d => color(d.data.name))
-      .attr('d',arc)
+      .attr('fill',(d:any) => color(d.data.name!) as any)
+      .attr('d',arc as any)
       .append('title')
-      .text(d => `${d.data.name}:${d.data.value.toLocaleString()}`)
+      .text((d:any) => `${d.data.name!}:${d.data.value!.toLocaleString()}`)
 
   svg.append('g')
       .attr('font-family', 'sans-serif')
@@ -1643,28 +1663,77 @@ const d3DonutChart = (data:any) => {
       .selectAll()
       .data(pie(data))
       .join('text')
-      .attr('transform',d => `translate(${arc.centroid(d)})`)
+      .attr('transform',(d:any) => `translate(${arc.centroid(d)})`)
       .call(text => text.append('tspan')
           .attr('y', '-0.4em')
           .attr('font-weight','bold')
-          .text(d => d.data.name)
+          .text((d:any) => d.data.name)
       )
       .call(text => text.filter(d => (d.endAngle - d.startAngle) > 0.25).append('tspan').attr("x", 0)
           .attr("y", "0.7em")
           .attr("fill-opacity", 0.7)
-          .text(d => d.data.value.toLocaleString("en-US")))
+          .text((d:any) => d.data.value.toLocaleString("en-US")))
 
   return svg.node()
 
 }
+// Histogram 直方图
+const d3HistogramChart = (data:any) => {
+  const width:number = 500;
+  const height:number = 500;
+  const margin:MarginType = {top: 20, right: 30, bottom: 30, left: 40};
+
+  const bins = (d3.bin().thresholds(40).value((d:any) => d.rate! as number))(data)
+
+  const x = d3.scaleLinear().domain([bins[0].x0 as number,bins[bins.length -1].x1 as number]).range([margin.left,width - margin.right])
+
+  const y = d3.scaleLinear().domain([0,d3.max(bins,d => d.length) as number]).range([height - margin.bottom,margin.top])
+
+  const svg = d3.select("#d3-test-hello-world")
+      .append('svg')
+      .attr("width", width)
+      .attr("height", height)
+    .attr("viewBox", [0, 0, width, height])
+    .attr("style", "max-width: 100%; height: auto;");
+
+  svg.append('g')
+      .attr('fill','steelblue')
+      .selectAll()
+      .data(bins)
+      .join('rect')
+      .attr('x',d => x(d.x0!) + 1)
+      .attr('width', d => x(d.x1!) - x(d.x0!) -1)
+      .attr('y',d => y(d.length))
+      .attr('height',d => y(0) - y(d.length))
+
+
+  svg.append('g')
+      .attr('transform',`translate(0,${height - margin.bottom})`)
+      .call(d3.axisBottom(x).ticks(width/80).tickSizeOuter(0))
+      .call(g => g.append('text').attr('x',width).attr('y',margin.bottom - 4).attr('fill','currentColor').attr('text-anchor','end') .text("Unemployment rate (%) →"))
+
+  svg.append('g')
+      .attr("transform", `translate(${margin.left},0)`)
+      .call(d3.axisLeft(y).ticks(height / 40))
+      .call((g) => g.select(".domain").remove())
+      .call((g) => g.append("text")
+          .attr("x", -margin.left)
+          .attr("y", 10)
+          .attr("fill", "currentColor")
+          .attr("text-anchor", "start")
+          .text("↑ Frequency (no. of counties)"));
+
+  return svg.node()
+}
 // d3 learn main
 onMounted(() => {
-  let svg =  d3DrawAxisXAndY()
-  svg = d3DrawBarChart(data)
-   svg = d3DrawLineChart(lineChartData)
-   svg = d3DrawLineChartRaw(lineChartData)
-  svg = d3AreaChartRaw(lineChartData)
-  svg = d3DonutChart(donutChartData)
+    d3DrawAxisXAndY()
+    d3DrawBarChart(data)
+    d3DrawLineChart(lineChartData)
+    d3DrawLineChartRaw(lineChartData)
+    d3AreaChartRaw(lineChartData)
+    d3DonutChart(donutChartData)
+    d3HistogramChart(histogramChartData)
 })
 
 
