@@ -5,6 +5,7 @@
 import * as d3 from 'd3'
 import {onMounted} from "vue";
 import HistogramChartData from "../assets/json/d3HistogramData.json"
+import {MarginType} from "./interface";
 interface dataType{
   letter:string,
   frequency:number
@@ -54,12 +55,7 @@ interface HistogramChartDataType{
   "county": string,
   "rate": number
 }
-interface MarginType{
-  top:number,
-  right:number,
-  bottom:number,
-  left:number
-}
+
 const parseDate = (date:any)=>{
   return Date.parse(date.toString());
   // return d3.timeParse(date.toString());

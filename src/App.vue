@@ -1,9 +1,11 @@
 <script setup lang="ts">
 import HelloWorld from './components/HelloWorld.vue'
+import d3Animation from './components/d3Animation/index.vue'
 </script>
 
 <template>
   <HelloWorld/>
+  <d3Animation/>
 </template>
 
 <style scoped>
