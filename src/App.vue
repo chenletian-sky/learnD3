@@ -4,7 +4,8 @@ import d3Animation from './components/d3Animation/index.vue'
 </script>
 
 <template>
-  <HelloWorld/>
+  <div id="d3-root" style="height: 100%"></div>
+<!--  <HelloWorld/>-->
   <d3Animation/>
 </template>
 
