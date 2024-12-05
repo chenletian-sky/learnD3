@@ -1,12 +1,15 @@
 <script setup lang="ts">
 import HelloWorld from './components/HelloWorld.vue'
 import d3Animation from './components/d3Animation/index.vue'
+import d3Interaction from './components/d3Interaction/index.vue'
+
 </script>
 
 <template>
   <div id="d3-root" style="height: 100%"></div>
 <!--  <HelloWorld/>-->
-  <d3Animation/>
+<!--  <d3Animation/>-->
+  <d3Interaction/>
 </template>
 
 <style scoped>
