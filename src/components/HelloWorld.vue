@@ -1,5 +1,5 @@
 <template>
-  <div id="d3-test-hello-world" style="height: 100%"></div>
+
 </template>
 <script setup lang="ts">
 import * as d3 from 'd3'
@@ -1373,7 +1373,7 @@ const d3DrawAxisXAndY = () => {
   let marginBottom = 30
   let marginLeft = 40
 
-  let svg = d3.select('#d3-test-hello-world')
+  let svg = d3.select('#d3-root')
       .append('svg')
       .attr("class", "bar-chart")
       .attr("viewBox", `0 0 ${width} ${height}`)
@@ -1423,7 +1423,7 @@ const d3DrawBarChart = (data:any[]) => {
       .domain([0, d3.max(data, d => d.frequency)])
       .range([height-margin.bottom,margin.top])
 
-  const svg = d3.select('#d3-test-hello-world')
+  const svg = d3.select('#d3-root')
       .append('svg')
       .attr("class", "bar-chart")
       .attr('height',height)
@@ -1467,7 +1467,7 @@ const d3DrawLineChart = (data:LineChartDataType[]) => {
       .x((d:any) => x(parseDate(d.date)))
       .y((d:any) => y(d.close))
 
-  const svg = d3.select('#d3-test-hello-world')
+  const svg = d3.select('#d3-root')
       .append('svg')
       .attr('height',height)
       .attr('width',width)
@@ -1518,7 +1518,7 @@ const d3DrawLineChartRaw = (aapl:any[]) => {
       .y((d:any) => y(d.close) )
 
   // Create the SVG container.
-  const svg = d3.select('#d3-test-hello-world')
+  const svg = d3.select('#d3-root')
       .append('svg')
       .attr("width", width)
       .attr("height", height)
@@ -1583,7 +1583,7 @@ const d3AreaChartRaw = (aapl:any) => {
       });
 
   // Create the SVG container.
-  const svg = d3.select('#d3-test-hello-world')
+  const svg = d3.select('#d3-root')
       .append('svg')
       .attr("width", width)
       .attr("height", height)
@@ -1636,7 +1636,7 @@ const d3DonutChart = (data:any) => {
       .domain(data.map((d:DonutChartData) => d.name))
       .range(d3.quantize(t => d3.interpolateSpectral(t * 0.8 + 0.1),data.length).reverse())
 
-  const svg = d3.select('#d3-test-hello-world')
+  const svg = d3.select('#d3-root')
       .append('svg')
       .attr("width", width)
       .attr("height", height as number)
@@ -1685,7 +1685,7 @@ const d3HistogramChart = (data:any) => {
 
   const y = d3.scaleLinear().domain([0,d3.max(bins,d => d.length) as number]).range([height - margin.bottom,margin.top])
 
-  const svg = d3.select("#d3-test-hello-world")
+  const svg = d3.select("#d3-root")
       .append('svg')
       .attr("width", width)
       .attr("height", height)
