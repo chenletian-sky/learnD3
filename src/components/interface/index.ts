@@ -4,3 +4,9 @@ export interface MarginType{
     bottom:number,
     left:number
 }
+export interface ConnectedScatterplotDataType{
+    "side": string,
+    "year": number,
+    "miles": number,
+    "gas": number
+}
